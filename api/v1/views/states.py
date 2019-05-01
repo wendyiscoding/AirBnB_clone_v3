@@ -23,8 +23,10 @@ def states():
         if 'name' not in x.keys():
             return jsonify(error="Missing name"), 400
         new_state = State(**x)
+        storage.new(new_state)
+        storage.save()
         return jsonify(new_state.to_dict()), 201
-    states_dict = storage.all()
+    states_dict = storage.all(State)
     return jsonify([item.to_dict() for item in states_dict.values()])
 
 
@@ -40,6 +42,7 @@ def state_id(state_id):
             return jsonify(state.to_dict())
         if request.method == 'DELETE':
             storage.delete(state)
+            storage.save()
             return jsonify({}), 200
         if request.method == 'PUT':
             """get_json() parses and returns the data (HTTP body) as JSON"""
@@ -50,4 +53,5 @@ def state_id(state_id):
             for key, value in x.items():
                 if key not in ignore:
                     setattr(state, key, value)
+            storage.save()
             return jsonify(state.to_dict()), 200
