@@ -22,9 +22,8 @@ def status():
 @app_views.route('/stats')
 def stats():
     """Return number of each objects by type"""
-    list_types = [Amenity, City, Place, Review, State, User]
-
-    count_dict = {}
-    for item in list_types:
-        count_dict[item.__name__] = storage.count(item)
-    return jsonify(count_dict)
+    dict_types = {"amenities": Amenity, "cities": City, "places": Place,
+                  "reviews": Review, "states": State, "users": User}
+    for key, values in dict_types.items():
+        dict_types[key] = storage.count(values)
+    return jsonify(dict_types)
