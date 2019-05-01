@@ -45,7 +45,6 @@ def city_id(city_id):
     """Retrieves a City object"""
     city = storage.get("City", city_id)
     if city is None:
-        print("Hello Susan")
         abort(404)
     if request.method == 'GET':
         return jsonify(city.to_dict())
