@@ -78,7 +78,7 @@ class FileStorage:
         Returns:
           The object based on the class name and its ID, or None if not found
         """
-        objects = self.all().values()
+        objects = self.all(classes[cls]).values()
         for obj in objects:
             if id == obj.id:
                 return obj
