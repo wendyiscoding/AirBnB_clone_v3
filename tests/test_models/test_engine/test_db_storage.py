@@ -70,19 +70,75 @@ test_db_storage.py'])
 
 class TestFileStorage(unittest.TestCase):
     """Test the FileStorage class"""
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    @classmethod
+    def setUpClass(cls):
+        """Setup the tests"""
+        cls.storage = DBStorage()
+        cls.storage.reload()
+        dict_values = {'first_name': 'Bobby',
+                       'last_name': 'Wow', 'email': 'bobbyw@gmail.com',
+                       'password': 'HI'}
+        cls.new = User(**dict_values)
+        cls.storage.new(cls.new)
+
+    @unittest.skipIf('HBNB_TYPE_STORAGE' not in os.environ and
+                     os.environ['HBNB_TYPE_STORAGE'] != 'db',
+                     'Do not test when testing file storage')
     def test_all_returns_dict(self):
         """Test that all returns a dictionaty"""
         self.assertIs(type(models.storage.all()), dict)
 
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
-    def test_all_no_class(self):
-        """Test that all returns all rows when no class is passed"""
+    @unittest.skipIf('HBNB_TYPE_STORAGE' not in os.environ and
+                     os.environ['HBNB_TYPE_STORAGE'] != 'db',
+                     'Do not test when testing file storage')
+    def test_valid_get(self):
+        """Tests when get is called with valid parameters"""
+        actual = self.storage.get(self.new.__class__.__name__, self.new.id)
+        expected = self.new
+        self.assertEqual(expected, actual)
 
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
-    def test_new(self):
-        """test that new adds an object to the database"""
+    @unittest.skipIf('HBNB_TYPE_STORAGE' not in os.environ and
+                     os.environ['HBNB_TYPE_STORAGE'] != 'db',
+                     'Do not test when testing file storage')
+    def test_invalid_get(self):
+        """Tests when get is called with invalid parameters"""
+        # Tests when wrong id is given
+        actual = self.storage.get(self.new.__class__.__name__, '12')
+        expected = None
+        self.assertEqual(expected, actual)
 
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
-    def test_save(self):
-        """Test that save properly saves objects to file.json"""
+        # Tests when wrong class is given
+        actual = self.storage.get('Place', self.new.id)
+        self.assertEqual(expected, actual)
+
+    @unittest.skipIf('HBNB_TYPE_STORAGE' not in os.environ and
+                     os.environ['HBNB_TYPE_STORAGE'] != 'db',
+                     'Do not test when testing file storage')
+    def test_valid_count(self):
+        """Tests when count is called with valid parameters"""
+        # Tests when no parameters are passed
+        self.storage.save()
+        existing = self.storage.all()
+        expected = len(existing)
+        actual = self.storage.count()
+        self.assertEqual(expected, actual)
+
+        list_cls = ['State', 'City', 'User', 'Amenity', 'Place', 'Review']
+        for cls in list_cls:
+            expected = 0
+            for item in existing.values():
+                if item.__class__.__name__ == cls:
+                    expected = expected + 1
+            actual = self.storage.count(cls)
+            self.assertEqual(expected, actual)
+
+    @unittest.skipIf('HBNB_TYPE_STORAGE' not in os.environ and
+                     os.environ['HBNB_TYPE_STORAGE'] != 'db',
+                     'Do not test when testing file storage')
+    def test_invalid_count(self):
+        """Tests when count is called with invalid parameters"""
+        invalid = ['AWER', 12, 12.4, (2, 3), [124, 2], {'hi': 5}]
+        expected = 0
+        for test in invalid:
+            actual = self.storage.count(test)
+            self.assertEqual(expected, actual)
