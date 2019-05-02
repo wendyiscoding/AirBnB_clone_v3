@@ -16,21 +16,20 @@ from models.user import User
 @app_views.route('/states/<state_id>/cities', methods=['GET', 'POST'])
 def cities(state_id):
     """Retrieves list of all Cities objects"""
+    state = storage.get("State", state_id)
+    if state is None:
+        abort(404)
     if request.method == 'POST':
         x = request.get_json()
         if request.is_json is False:
             return jsonify(error="Not a JSON"), 400
         if 'name' not in x.keys():
             return jsonify(error="Missing name"), 400
-        # add state_id to x
         x['state_id'] = state_id
         new_city = City(**x)
         storage.new(new_city)
         storage.save()
         return jsonify(new_city.to_dict()), 201
-    state = storage.get("State", state_id)
-    if state is None:
-        abort(404)
     cities = state.cities
     city_list = []
     for city in cities:
