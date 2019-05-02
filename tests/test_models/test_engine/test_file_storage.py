@@ -79,6 +79,11 @@ class TestFileStorage(unittest.TestCase):
         except Exception as e:
             pass
 
+        dict_values = {'first_name': 'Bobby',
+                       'last_name': 'Wow', 'email': 'bobbyw@gmail.com'}
+        cls.new = User(**dict_values)
+        cls.new.save()
+
     @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
     def test_all_returns_dict(self):
         """Test that all returns the FileStorage.__objects attr"""
@@ -127,27 +132,51 @@ class TestFileStorage(unittest.TestCase):
     def test_valid_get(self):
         """Tests when get is called with valid parameters"""
         storage = FileStorage()
-        dict_values = {'first_name': 'Bobby',
-                       'last_name': 'Wow', 'email': 'bobbyw@gmail.com'}
-        new = User(**dict_values)
-        new.save()
-        actual = storage.get(new.__class__.__name__, new.id)
-        expected = new
+        actual = storage.get(self.new.__class__.__name__, self.new.id)
+        expected = self.new
         self.assertEqual(expected, actual)
 
     @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
     def test_invalid_get(self):
         """Tests when get is called with invalid parameters"""
         storage = FileStorage()
-        dict_values = {'first_name': 'Bobby',
-                       'last_name': 'Wow', 'email': 'bobbyw@gmail.com'}
-        new = User(**dict_values)
-        new.save()
         # Tests when wrong id is given
-        actual = storage.get(new.__class__.__name__, '12')
+        actual = storage.get(self.new.__class__.__name__, '12')
         expected = None
         self.assertEqual(expected, actual)
 
         # Tests when wrong class is given
-        actual = storage.get('Place', new.id)
+        actual = storage.get('Place', self.new.id)
         self.assertEqual(expected, actual)
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_valid_count(self):
+        """Tests when count is called with valid parameters"""
+        # Tests when no parameters are passed"""
+        storage = FileStorage()
+        storage.save()
+        with open('file.json', 'r') as f:
+            js = f.read()
+        json_dict = json.loads(js)
+        expected = len(json_dict)
+        actual = storage.count()
+        self.assertEqual(expected, actual)
+
+        list_cls = ['State', 'City', 'User', 'Amenity', 'Place', 'Review']
+        for cls in list_cls:
+            expected = 0
+            for item in json_dict.values():
+                if item['__class__'] == cls:
+                    expected = expected + 1
+            actual = storage.count(cls)
+            self.assertEqual(expected, actual)
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_invalid_count(self):
+        """Tests when count is called with invalid parameters"""
+        invalid = ['AWER', 12, 12.4, (2, 3), [124, 2], {'hi': 5}]
+        storage = FileStorage()
+        expected = 0
+        for test in invalid:
+            actual = storage.count(test)
+            self.assertEqual(expected, actual)
