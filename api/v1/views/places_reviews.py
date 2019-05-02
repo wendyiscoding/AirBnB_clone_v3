@@ -59,7 +59,7 @@ def review_id(review_id):
         return jsonify({}), 200
     if request.method == 'PUT':
         http_body = request.get_json()
-        if http_body.is_json is False:
+        if request.is_json is False:
             return jsonify(error="Not a JSON"), 400
         ignore = ['id', 'user_id', 'place_id', 'created_at', 'updated_at']
         for key in http_body.keys():
