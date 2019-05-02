@@ -70,5 +70,6 @@ def place_object(place_id):
         place.save()
         return jsonify(place.to_dict()), 200
     elif request.method == 'DELETE':
-        place.delete()
+        storage.delete(place)
+        storage.save()
         return jsonify({}), 200
