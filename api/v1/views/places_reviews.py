@@ -17,7 +17,7 @@ from models.user import User
 def place_id_reviews(place_id):
     """GET method: retrieve list of all Review objects of a Place"""
     if request.method == 'POST':
-        if request.is_json is FALSE:
+        if request.is_json is False:
             abort(404)
         http_body = request.get_json()
         if "user_id" not in http_body.keys():
