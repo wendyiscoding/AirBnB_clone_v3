@@ -70,6 +70,15 @@ test_file_storage.py'])
 
 class TestFileStorage(unittest.TestCase):
     """Test the FileStorage class"""
+    @classmethod
+    def setUpClass(cls):
+        """Setup the tests"""
+        # Remove JSON file if any
+        try:
+            os.remove('file.json')
+        except Exception as e:
+            pass
+
     @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
     def test_all_returns_dict(self):
         """Test that all returns the FileStorage.__objects attr"""
@@ -113,3 +122,15 @@ class TestFileStorage(unittest.TestCase):
         with open("file.json", "r") as f:
             js = f.read()
         self.assertEqual(json.loads(string), json.loads(js))
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_valid_get(self):
+        """Tests when get is called with valid parameters"""
+        storage = FileStorage()
+        dict_values = {'first_name': 'Bobby',
+                       'last_name': 'Wow', 'email': 'bobbyw@gmail.com'}
+        new = User(**dict_values)
+        new.save()
+        expected = new
+        actual = storage.get(new.__class__.__name__, new.id)
+        self.assertEqual(expected, actual)
