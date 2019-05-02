@@ -131,6 +131,23 @@ class TestFileStorage(unittest.TestCase):
                        'last_name': 'Wow', 'email': 'bobbyw@gmail.com'}
         new = User(**dict_values)
         new.save()
-        expected = new
         actual = storage.get(new.__class__.__name__, new.id)
+        expected = new
+        self.assertEqual(expected, actual)
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_invalid_get(self):
+        """Tests when get is called with invalid parameters"""
+        storage = FileStorage()
+        dict_values = {'first_name': 'Bobby',
+                       'last_name': 'Wow', 'email': 'bobbyw@gmail.com'}
+        new = User(**dict_values)
+        new.save()
+        # Tests when wrong id is given
+        actual = storage.get(new.__class__.__name__, '12')
+        expected = None
+        self.assertEqual(expected, actual)
+
+        # Tests when wrong class is given
+        actual = storage.get('Place', new.id)
         self.assertEqual(expected, actual)
