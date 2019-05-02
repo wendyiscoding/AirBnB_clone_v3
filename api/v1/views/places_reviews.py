@@ -27,6 +27,7 @@ def place_id_reviews(place_id):
             abort(404)
         if "text" not in http_body.keys():
             return jsonify(error="Missing text"), 400
+        http_body['place_id'] = place_id
         new_review = Review(**http_body)
         storage.new(new_review)
         storage.save()
