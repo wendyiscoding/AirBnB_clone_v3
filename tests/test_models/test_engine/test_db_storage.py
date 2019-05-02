@@ -70,6 +70,10 @@ test_db_storage.py'])
 
 class TestFileStorage(unittest.TestCase):
     """Test the FileStorage class"""
+
+    @unittest.skipIf('HBNB_TYPE_STORAGE' not in os.environ or
+                     os.environ['HBNB_TYPE_STORAGE'] != 'db',
+                     'Do not test when testing file storage')
     @classmethod
     def setUpClass(cls):
         """Setup the tests"""
@@ -81,14 +85,24 @@ class TestFileStorage(unittest.TestCase):
         cls.new = User(**dict_values)
         cls.storage.new(cls.new)
 
-    @unittest.skipIf('HBNB_TYPE_STORAGE' not in os.environ and
-                     os.environ['HBNB_TYPE_STORAGE'] != 'db',
-                     'Do not test when testing file storage')
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_all_returns_dict(self):
         """Test that all returns a dictionaty"""
         self.assertIs(type(models.storage.all()), dict)
 
-    @unittest.skipIf('HBNB_TYPE_STORAGE' not in os.environ and
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_all_no_class(self):
+        """Test that all returns all rows when no class is passed"""
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_new(self):
+        """test that new adds an object to the database"""
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_save(self):
+        """Test that save properly saves objects to file.json"""
+
+    @unittest.skipIf('HBNB_TYPE_STORAGE' not in os.environ or
                      os.environ['HBNB_TYPE_STORAGE'] != 'db',
                      'Do not test when testing file storage')
     def test_valid_get(self):
@@ -97,7 +111,7 @@ class TestFileStorage(unittest.TestCase):
         expected = self.new
         self.assertEqual(expected, actual)
 
-    @unittest.skipIf('HBNB_TYPE_STORAGE' not in os.environ and
+    @unittest.skipIf('HBNB_TYPE_STORAGE' not in os.environ or
                      os.environ['HBNB_TYPE_STORAGE'] != 'db',
                      'Do not test when testing file storage')
     def test_invalid_get(self):
@@ -111,7 +125,7 @@ class TestFileStorage(unittest.TestCase):
         actual = self.storage.get('Place', self.new.id)
         self.assertEqual(expected, actual)
 
-    @unittest.skipIf('HBNB_TYPE_STORAGE' not in os.environ and
+    @unittest.skipIf('HBNB_TYPE_STORAGE' not in os.environ or
                      os.environ['HBNB_TYPE_STORAGE'] != 'db',
                      'Do not test when testing file storage')
     def test_valid_count(self):
@@ -132,7 +146,7 @@ class TestFileStorage(unittest.TestCase):
             actual = self.storage.count(cls)
             self.assertEqual(expected, actual)
 
-    @unittest.skipIf('HBNB_TYPE_STORAGE' not in os.environ and
+    @unittest.skipIf('HBNB_TYPE_STORAGE' not in os.environ or
                      os.environ['HBNB_TYPE_STORAGE'] != 'db',
                      'Do not test when testing file storage')
     def test_invalid_count(self):
