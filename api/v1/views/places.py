@@ -3,7 +3,7 @@
 associates urls to our blueprint
 """
 from api.v1.views import app_views
-from flask import jsonify, request
+from flask import jsonify, request, abort
 from models import storage
 from models.amenity import Amenity
 from models.city import City
@@ -39,8 +39,7 @@ def city_place(city_id):
             return jsonify(error='Missing name'), 400
         entries['city_id'] = city_id
         new_place = Place(**entries)
-        storage.new(new_place)
-        storage.save()
+        new_place.save()
         return jsonify(new_place.to_dict()), 201
 
     places = storage.all(Place)
@@ -68,9 +67,8 @@ def place_object(place_id):
         for entry in entries:
             if entry not in ignore:
                 setattr(place, entry, entries[entry])
-        storage.save()
+        place.save()
         return jsonify(place.to_dict()), 200
     elif request.method == 'DELETE':
-        storage.delete(place)
-        storage.save()
+        place.delete()
         return jsonify({}), 200
