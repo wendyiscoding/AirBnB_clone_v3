@@ -25,7 +25,11 @@ def city_place(city_id):
     if request.method == 'POST':
         if request.is_json is False:
             return jsonify(error='Not a JSON'), 400
-        entries = request.get_json()
+        try:
+            entries = request.get_json()
+        except Exception as e:
+            return jsonify(error='Not a JSON'), 400
+
         if 'user_id' not in entries.keys():
             return jsonify(error='Missing user_id'), 400
         user = storage.get('User', entries['user_id'])
