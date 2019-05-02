@@ -13,9 +13,13 @@ from models.state import State
 from models.user import User
 
 
-@app_views.route('places/<place_id>/reviews', methods=['GET', 'POST'])
+@app_views.route('/places/<place_id>/reviews', methods=['GET', 'POST'])
 def place_id_reviews(place_id):
-    """GET method: retrieve list of all Review objects of a Place"""
+    """GET method: retrieve list of all Review objects of a Place
+    POST method: creates a Review"""
+    place = storage.get('Place', place_id)
+    if place is None:
+        abort(404)
     if request.method == 'POST':
         if request.is_json is False:
             return jsonify(error='Not a JSON'), 400
@@ -32,9 +36,6 @@ def place_id_reviews(place_id):
         storage.new(new_review)
         storage.save()
         return jsonify(new_review.to_dict()), 201
-    place = storage.get('Place', place_id)
-    if place is None:
-        abort(404)
     reviews = storage.all('Review').values()
     reviews_list = []
     for review in reviews:
@@ -43,9 +44,9 @@ def place_id_reviews(place_id):
     return jsonify(reviews_list)
 
 
-@app_views.route('reviews/<review_id>', methods=['GET', 'DELETE', 'PUT'])
+@app_views.route('/reviews/<review_id>', methods=['GET', 'DELETE', 'PUT'])
 def review_id(review_id):
-    """GET method: retrive a Review object
+    """GET method: retrieve a Review object
     DELETE method: deletes a Review object
     PUT method: updates a Review object"""
     review = storage.get('Review', review_id)
@@ -58,9 +59,9 @@ def review_id(review_id):
         storage.save()
         return jsonify({}), 200
     if request.method == 'PUT':
-        http_body = request.get_json()
         if request.is_json is False:
             return jsonify(error="Not a JSON"), 400
+        http_body = request.get_json()
         ignore = ['id', 'user_id', 'place_id', 'created_at', 'updated_at']
         for key in http_body.keys():
             if key not in ignore:
