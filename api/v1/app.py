@@ -4,6 +4,7 @@ app factory
 """
 from api.v1.views import app_views
 from flask import Flask, jsonify
+from flask_cors import CORS
 import os
 from models import storage
 
@@ -33,6 +34,7 @@ def create_app():
 
 if __name__ == "__main__":
     app = create_app()
+    CORS(app, resources={r"/*": {"origins": "0.0.0.0"}})
     if 'HBNB_API_HOST' not in os.environ:
         os.environ['HBNB_API_HOST'] = '0.0.0.0'
     if 'HBNB_API_PORT' not in os.environ:
