@@ -70,6 +70,7 @@ test_file_storage.py'])
 
 class TestFileStorage(unittest.TestCase):
     """Test the FileStorage class"""
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
     @classmethod
     def setUpClass(cls):
         """Setup the tests"""
