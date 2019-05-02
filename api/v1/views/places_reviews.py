@@ -18,7 +18,7 @@ def place_id_reviews(place_id):
     """GET method: retrieve list of all Review objects of a Place"""
     if request.method == 'POST':
         if request.is_json is False:
-            abort(404)
+            return jsonify(error='Not a JSON'), 400
         http_body = request.get_json()
         if "user_id" not in http_body.keys():
             return jsonify(error="Missing user_id"), 400
