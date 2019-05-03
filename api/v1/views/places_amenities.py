@@ -13,6 +13,7 @@ from models.review import Review
 from models.state import State
 from models.user import User
 
+
 @app_views.route('/places/<place_id>/amenities', methods=['GET'])
 def place_id_amenities(place_id):
     """GET method: retrieve list of all Amenity objects of a Place"""
@@ -22,7 +23,9 @@ def place_id_amenities(place_id):
     amenities = place.amenities
     return jsonify([item.to_dict() for item in amenities])
 
-@app_views.route('/places/<place_id>/amenities/<amenity_id>', methods=['DELETE', 'POST'])
+
+@app_views.route('/places/<place_id>/amenities/<amenity_id>',
+                 methods=['DELETE', 'POST'])
 def place_id_amenities_amenity_id(place_id, amenity_id):
     """DELETE method: deletes an Amenity object to a Place
     POST method: links an Amenity object to a Place"""
@@ -38,3 +41,16 @@ def place_id_amenities_amenity_id(place_id, amenity_id):
                 storage.save()
                 return jsonify({}), 200
         abort(404)
+    elif request.method == 'POST':
+        for amenity in place_amenities:
+            if amenity.id == amenity_id:
+                return (jsonify(amenity.to_dict())), 200
+        json_dict = {}
+        try:
+            json_dict = request.get_json()
+        except Exception as e:
+            pass
+        json_dict['place_id'] = place_id
+        new = Amenity(**json_dict)
+        new.save()
+        return jsonify(new.to_dict()), 201
