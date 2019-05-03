@@ -34,9 +34,7 @@ def place_id_amenities_amenity_id(place_id, amenity_id):
     if request.method == 'DELETE':
         for amenity in place_amenities:
             if amenity.id == amenity_id:
-                print(place.amenities)
                 place.amenities.remove(amenity)
-                print(place.amenities)
                 storage.save()
                 return jsonify({}), 200
         abort(404)
