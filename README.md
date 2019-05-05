@@ -159,10 +159,9 @@ Jennifer Huang - [Github](https://github.com/jhuang10123) / [Twitter](https://tw
 
 Second part of Airbnb: Joann Vuong
 
-AirBnB - RESTful API:
-
-Wendy Leung - [Github] (https://github.com/wendyiscoding)
-Susan Su - [Github] (https://github.com/suhearsawho)
+RESTful API
+* **Wendy Leung** - [Github](https://github.com/wendyiscoding)
+* **Susan Su** - [Github](https://github.com/suhearsawho)
 
 ## License
 Public Domain. No copy write protection. 

@@ -9,4 +9,4 @@
 
 ## Authors
 * **Wendy Leung** - [wendyiscoding](https://github.com/wendyiscoding)
-* **Susan Su** - [suhearsawho] (https://github.com/suhearsawho)
+* **Susan Su** - [suhearsawho](https://github.com/suhearsawho)
